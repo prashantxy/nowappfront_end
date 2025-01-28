@@ -7,44 +7,41 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../compone
 import { ScrollArea } from "../components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
 
-// Simple SVG icons as components
+interface Message {
+  id: string
+  content: string
+  role: 'user' | 'assistant'
+  timestamp?: string
+  isRead?: boolean
+}
+
+interface User {
+  name: string
+  status: 'online' | 'offline'
+  lastSeen: string
+}
+
 const Icons = {
   Users: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-      <circle cx="9" cy="7" r="4"></circle>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-    </svg>
-  ),
-  Message: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-    </svg>
-  ),
-  Moon: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-    </svg>
-  ),
-  Settings: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3"></circle>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
   ),
   Send: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="22" y1="2" x2="11" y2="13"></line>
-      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M22 2L11 13" />
+      <path d="M22 2L15 22L11 13L2 9L22 2Z" />
     </svg>
   )
 }
 
 export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit } = useChat()
-  const [resolvedMessages, setResolvedMessages] = useState<any[]>([])
-  const [users] = useState([
+  const [resolvedMessages, setResolvedMessages] = useState<Message[]>([])
+  const [users] = useState<User[]>([
     { name: "Alice", status: "online", lastSeen: "Just now" },
     { name: "Bob", status: "offline", lastSeen: "2h ago" },
     { name: "Charlie", status: "online", lastSeen: "Just now" },
@@ -57,8 +54,8 @@ export default function ChatPage() {
       const resolved = await Promise.all(
         messages.map(async (message: any) => {
           const content = message.content instanceof Promise ? await message.content : message.content
-          return { 
-            ...message, 
+          return {
+            ...message,
             content,
             timestamp: new Date().toLocaleTimeString(),
             isRead: true
@@ -72,7 +69,6 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen bg-gray-950">
-      {/* Sidebar */}
       <div className={`${showUserList ? 'w-72' : 'w-16'} transition-all duration-300 ease-in-out`}>
         <Card className="h-full m-2 bg-gray-900 border-gray-800">
           <CardHeader className="flex flex-row items-center justify-between">
@@ -81,8 +77,7 @@ export default function ChatPage() {
               {showUserList && "Users"}
             </CardTitle>
             <Button 
-              variant="default" 
-              size="icon"
+              variant="outline"
               onClick={() => setShowUserList(!showUserList)}
               className="text-gray-400 hover:text-gray-200"
             >
@@ -117,23 +112,9 @@ export default function ChatPage() {
         </Card>
       </div>
 
-      {/* Main Chat Area */}
       <Card className="flex-grow m-2 bg-gray-900 border-gray-800">
         <CardHeader className="border-b border-gray-800">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <span className="text-gray-400"><Icons.Message /></span>
-              <CardTitle className="text-gray-200">Chat</CardTitle>
-            </div>
-            <div className="flex space-x-2">
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-200">
-                <Icons.Moon />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-200">
-                <Icons.Settings />
-              </Button>
-            </div>
-          </div>
+          <CardTitle className="text-gray-200">Chat</CardTitle>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[calc(100vh-250px)]">

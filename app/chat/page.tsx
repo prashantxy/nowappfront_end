@@ -81,7 +81,7 @@ export default function ChatPage() {
               {showUserList && "Users"}
             </CardTitle>
             <Button 
-              variant="ghost" 
+              variant="default" 
               size="icon"
               onClick={() => setShowUserList(!showUserList)}
               className="text-gray-400 hover:text-gray-200"
